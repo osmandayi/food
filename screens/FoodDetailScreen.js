@@ -1,67 +1,84 @@
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useContext, useLayoutEffect, useState } from 'react'
 import { FOODS } from '../data/dummy-data';
 import FoodIngredients from '../components/FoodIngredients';
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FavoritesContext } from '../store/favoritesContext';
 
 export default function FoodDetailScreen({ route, navigation }) {
+    const favoriteFoodContext = useContext(FavoritesContext);
+    const { ids, removeFavorite, addFavorite } = favoriteFoodContext;
     const { foodId } = route.params;
-    const [favorites, setFavorites] = useState(false);
+    // const [favorites, setFavorites] = useState(false);
 
     const selectedFood = FOODS?.find((food) => food.id === foodId);
 
     const { affordability, categoryIds, complexity, imageUrl, ingredients, title } = selectedFood;
 
-    const favHandler = async () => {
-        try {
-            // AsyncStorage'den favorilerin listesini al
-            const favoritesList = await AsyncStorage.getItem('favorites');
-            let favoritess = [];
+    const foodIsFavorite = ids.includes(foodId)
 
-            // Eğer favoriler listesi varsa onu al, yoksa boş bir dizi ata
-            if (favoritesList) {
-                favoritess = JSON.parse(favoritesList);
-            }
-
-            // Eğer favorites listesi içinde bu yemeğin ID'si zaten varsa, favorilerden çıkar, yoksa ekle
-            const index = favoritess.indexOf(foodId);
-            if (index !== -1) {
-                // Yemek favoriler listesinde bulundu, yani favorilerden çıkar
-                favoritess.splice(index, 1);
-                setFavorites(false);
-            } else {
-                // Yemek favoriler listesinde bulunamadı, yani favorilere ekle
-                favoritess.push(foodId);
-                setFavorites(true);
-            }
-
-            // Güncellenmiş favoriler listesini AsyncStorage'e kaydet
-            await AsyncStorage.setItem('favorites', JSON.stringify(favoritess));
-
-
-        } catch (error) {
-            console.log('Hata oluştu:', error);
+    const favHandler = () => {
+        if (foodIsFavorite) {
+            removeFavorite(foodId);
         }
+        else {
+            addFavorite(foodId);
+        }
+
     }
 
 
-    useLayoutEffect(() => {
 
-        const isFav = async () => {
-            const favoritesList = await AsyncStorage.getItem('favorites');
-            let favoritess = [];
-            if (favoritesList) {
-                favoritess = JSON.parse(favoritesList);
-            }
-            setFavorites(favoritess.includes(foodId));
-        }
+    // const favHandler = async () => {
+    //     try {
+    //         // AsyncStorage'den favorilerin listesini al
+    //         const favoritesList = await AsyncStorage.getItem('favorites');
+    //         let favoritess = [];
+
+    //         // Eğer favoriler listesi varsa onu al, yoksa boş bir dizi ata
+    //         if (favoritesList) {
+    //             favoritess = JSON.parse(favoritesList);
+    //         }
+
+    //         // Eğer favorites listesi içinde bu yemeğin ID'si zaten varsa, favorilerden çıkar, yoksa ekle
+    //         const index = favoritess.indexOf(foodId);
+    //         if (index !== -1) {
+    //             // Yemek favoriler listesinde bulundu, yani favorilerden çıkar
+    //             favoritess.splice(index, 1);
+    //             setFavorites(false);
+    //         } else {
+    //             // Yemek favoriler listesinde bulunamadı, yani favorilere ekle
+    //             favoritess.push(foodId);
+    //             setFavorites(true);
+    //         }
+
+    //         // Güncellenmiş favoriler listesini AsyncStorage'e kaydet
+    //         await AsyncStorage.setItem('favorites', JSON.stringify(favoritess));
+
+
+    //     } catch (error) {
+    //         console.log('Hata oluştu:', error);
+    //     }
+    // }
+
+
+    // useLayoutEffect(() => {
+
+    //     const isFav = async () => {
+    //         const favoritesList = await AsyncStorage.getItem('favorites');
+    //         let favoritess = [];
+    //         if (favoritesList) {
+    //             favoritess = JSON.parse(favoritesList);
+    //         }
+    //         setFavorites(favoritess.includes(foodId));
+    //     }
 
 
 
-        isFav();
+    //     isFav();
 
-    }, [favorites]);
+    // }, [favorites]);
 
 
     useLayoutEffect(() => {
@@ -70,13 +87,13 @@ export default function FoodDetailScreen({ route, navigation }) {
                 return (
                     <Pressable style={({ pressed }) => pressed && styles.onPressed} onPress={favHandler}>
                         {
-                            favorites ? <AntDesign name="star" size={24} color="white" /> : <AntDesign name="staro" size={24} color="white" />
+                            foodIsFavorite ? <AntDesign name="star" size={24} color="white" /> : <AntDesign name="staro" size={24} color="white" />
                         }
                     </Pressable>
                 )
             }
         })
-    }, [navigation, favorites]);
+    }, [navigation, foodIsFavorite]);
 
 
 

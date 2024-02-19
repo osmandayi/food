@@ -8,6 +8,7 @@ import FoodDetailScreen from "./screens/FoodDetailScreen";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import FavoritesScreen from "./screens/FavoritesScreen";
 import { AntDesign } from '@expo/vector-icons';
+import FavoritesContextProvider from "./store/favoritesContext";
 
 
 const Stack = createNativeStackNavigator();
@@ -21,11 +22,12 @@ const DrawerNavigator = () => {
       screenOptions={{
         headerStyle: { backgroundColor: "blue" },
         headerTintColor: "white",
+        drawerContentStyle: { backgroundColor: 'lightblue' },
       }}>
       <Drawer.Screen name="Categories" component={CategoriesScreen} options={{
         title: 'Tüm Kategoriler', drawerIcon: () => (
           <AntDesign name="appstore1" size={24} color="black" />
-        )
+        ),
       }} />
       <Drawer.Screen name="Favorites" component={FavoritesScreen} options={{
         title: 'Favoriler', drawerIcon: () => (
@@ -41,22 +43,24 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Categories"
-        screenOptions={{
-          headerStyle: { backgroundColor: "blue" },
-          headerTintColor: "white",
-          contentStyle: { backgroundColor: "lightblue" },
-        }}
-      >
-        {/* <Stack.Screen name="Categories" component={CategoriesScreen} options={{ title: 'Tüm Kategoriler' }} /> */}
-        <Stack.Screen name="Drawer" component={DrawerNavigator} options={{
-          headerShown: false,
-        }} />
-        <Stack.Screen name="FoodOverview" component={FoodOverviewScreen} />
-        <Stack.Screen name="FoodDetail" component={FoodDetailScreen} options={{ title: 'İçerik' }} />
-        {/* <Stack.Screen name="Favorites" component={FavoritesScreen} options={{ title: 'İçerik' }} /> */}
-      </Stack.Navigator>
+      <FavoritesContextProvider>
+        <Stack.Navigator
+          initialRouteName="Categories"
+          screenOptions={{
+            headerStyle: { backgroundColor: "blue" },
+            headerTintColor: "white",
+            contentStyle: { backgroundColor: "lightblue" },
+          }}
+        >
+          {/* <Stack.Screen name="Categories" component={CategoriesScreen} options={{ title: 'Tüm Kategoriler' }} /> */}
+          <Stack.Screen name="Drawer" component={DrawerNavigator} options={{
+            headerShown: false,
+          }} />
+          <Stack.Screen name="FoodOverview" component={FoodOverviewScreen} />
+          <Stack.Screen name="FoodDetail" component={FoodDetailScreen} options={{ title: 'İçerik' }} />
+          {/* <Stack.Screen name="Favorites" component={FavoritesScreen} options={{ title: 'İçerik' }} /> */}
+        </Stack.Navigator>
+      </FavoritesContextProvider>
     </NavigationContainer>
   );
 }

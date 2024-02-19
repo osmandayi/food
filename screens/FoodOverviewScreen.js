@@ -2,6 +2,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useLayoutEffect } from 'react'
 import { CATEGORIES, FOODS } from '../data/dummy-data';
 import FoodItem from '../components/FoodItem';
+import FoodList from '../components/FoodList';
 
 export default function FoodOverviewScreen({ route, navigation }) {
 
@@ -11,9 +12,7 @@ export default function FoodOverviewScreen({ route, navigation }) {
         return foodItem.categoryIds.includes(categoryId);
     });
 
-    const renderFoodItem = (itemData) => {
-        return <FoodItem data={itemData.item} />
-    }
+
 
 
 
@@ -35,10 +34,7 @@ export default function FoodOverviewScreen({ route, navigation }) {
     }, [navigation, categoryId]);
 
     return (
-        <View>
-            {/* <Text>FoodOverviewScreen - {categoryId}</Text> */}
-            <FlatList data={displayedFoods} keyExtractor={(item) => item.id} renderItem={renderFoodItem} />
-        </View>
+        <FoodList items={displayedFoods} />
     )
 }
 
