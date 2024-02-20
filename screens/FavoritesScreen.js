@@ -4,12 +4,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FavoritesContext } from '../store/favoritesContext';
 import { FOODS } from '../data/dummy-data';
 import FoodList from '../components/FoodList';
+import { useSelector } from 'react-redux';
 
 export default function FavoritesScreen() {
-
-    const favoriteFoodContext = useContext(FavoritesContext);
-    const { ids } = favoriteFoodContext;
-    const favoriteFoods = FOODS?.filter((food) => ids.includes(food.id));
+    const favoriteFoodsIds = useSelector((state) => state.favoriteFoods.ids);
+    // const favoriteFoodContext = useContext(FavoritesContext);
+    // const { ids } = favoriteFoodContext;
+    const favoriteFoods = FOODS?.filter((food) => favoriteFoodsIds.includes(food.id));
 
     // useLayoutEffect(() => {
     //     const firstLoadFunc = async () => {

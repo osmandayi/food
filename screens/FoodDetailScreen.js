@@ -5,25 +5,31 @@ import FoodIngredients from '../components/FoodIngredients';
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FavoritesContext } from '../store/favoritesContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { addFavorite, removeFavorite } from '../store/redux/favorites';
 
 export default function FoodDetailScreen({ route, navigation }) {
-    const favoriteFoodContext = useContext(FavoritesContext);
-    const { ids, removeFavorite, addFavorite } = favoriteFoodContext;
+    const favoriteFoodsIds = useSelector((state) => state.favoriteFoods.ids);
+    // const favoriteFoodContext = useContext(FavoritesContext);
+    // const { ids, removeFavorite, addFavorite } = favoriteFoodContext;
     const { foodId } = route.params;
     // const [favorites, setFavorites] = useState(false);
-
+    const dispatch = useDispatch();
     const selectedFood = FOODS?.find((food) => food.id === foodId);
 
     const { affordability, categoryIds, complexity, imageUrl, ingredients, title } = selectedFood;
 
-    const foodIsFavorite = ids.includes(foodId)
+    // const foodIsFavorite = ids.includes(foodId);
+    const foodIsFavorite = favoriteFoodsIds.includes(foodId);
 
     const favHandler = () => {
         if (foodIsFavorite) {
-            removeFavorite(foodId);
+            dispatch(removeFavorite({id: foodId}));
+            // removeFavorite(foodId);
         }
         else {
-            addFavorite(foodId);
+            dispatch(addFavorite({id: foodId}));
+            // addFavorite(foodId);
         }
 
     }
